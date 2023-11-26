@@ -49,7 +49,7 @@
 
 # # Import Packages/Libraries
 
-# In[ ]:
+# In[40]:
 
 
 # Start your code here
@@ -82,20 +82,20 @@ import seaborn as sns
 
 # "This product uses the NASS API but is not endorsed or certified by NASS."
 
-# In[ ]:
+# In[41]:
 
 
 # API KEY obtained from https://quickstats.nass.usda.gov/api/
 API_KEY = os.getenv('API_KEY')
 
 
-# In[ ]:
+# In[42]:
 
 
 # URL='https://quickstats.nass.usda.gov/results/5707E545-6B9E-35A4-AF77-DAF0BA7D7A7B'
 
 
-# In[ ]:
+# In[43]:
 
 
 # API documentation: https://quickstats.nass.usda.gov/api
@@ -105,7 +105,7 @@ url = 'https://quickstats.nass.usda.gov/api/api_GET/'
 params = {
     "key":API_KEY,
     "commodity_desc":"CORN",
-    "year__GE":"2010",
+    "year__GE":"2013",
     "state_alpha":"IN",
     "county_name":"RIPLEY",
     "sector_desc":"CROPS",
@@ -186,7 +186,7 @@ nass_data = str(response.json())
 
 # #### Data Loading
 
-# In[ ]:
+# In[44]:
 
 
 import io
@@ -196,7 +196,7 @@ nass_df = pd.read_json(io.StringIO(nass_data), orient='records')
 nass_df.head()
 
 
-# In[ ]:
+# In[45]:
 
 
 # Reference: https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value
@@ -220,7 +220,7 @@ nass_combined_df = pd.concat(dataframes, ignore_index=True)
 nass_combined_df.sample(10)
 
 
-# In[ ]:
+# In[46]:
 
 
 """
@@ -235,7 +235,7 @@ nass_combined_df_clean = clean_data(nass_combined_df.copy())
 nass_combined_df_clean.head()
 
 
-# In[ ]:
+# In[47]:
 
 
 # Remove commas from the 'Value' column
@@ -245,7 +245,7 @@ nass_combined_df_clean = nass_combined_df_clean.astype({'Value': 'float64'})
 nass_combined_df_clean.info()
 
 
-# In[ ]:
+# In[48]:
 
 
 # Split dataframe into four dataframes: one for each statistical category
@@ -255,14 +255,14 @@ yield_per_acre = nass_combined_df_clean[nass_combined_df_clean['statisticcat_des
 production = nass_combined_df_clean[nass_combined_df_clean['statisticcat_desc'] == 'PRODUCTION']
 
 
-# In[ ]:
+# In[49]:
 
 
 nass_pivoted_df = nass_combined_df_clean.pivot(index='year', columns='statisticcat_desc', values='Value')
 nass_pivoted_df
 
 
-# In[ ]:
+# In[50]:
 
 
 print(area_planted.shape)
@@ -272,7 +272,7 @@ print(production.shape)
 print(nass_combined_df_clean.shape)
 
 
-# In[ ]:
+# In[51]:
 
 
 nass_pivoted_df.info()
@@ -280,7 +280,7 @@ nass_pivoted_df.info()
 
 # ### Data Visualization
 
-# In[ ]:
+# In[52]:
 
 
 # Correlation matrix of nass_pivoted_df
@@ -288,7 +288,7 @@ corr_matrix = nass_pivoted_df.corr()
 corr_matrix
 
 
-# In[ ]:
+# In[53]:
 
 
 # Heatmap of correlation matrix
@@ -299,42 +299,42 @@ plt.show()
 
 # # Data Set: Local Climatological Data (LCD)
 
-# In[ ]:
+# In[54]:
 
 
 # Read the CSV file into a dataframe
 lcd_df = pd.read_csv('data\LCD_Columbus_Bakalar_Municipal_Airport_Indiana_US.csv', low_memory=False)
 
 
-# In[ ]:
+# In[55]:
 
 
 # Describe the dataframe
 lcd_df.describe()
 
 
-# In[ ]:
+# In[56]:
 
 
 # Display the first 5 rows of the dataframe
 lcd_df.head()
 
 
-# In[ ]:
+# In[57]:
 
 
 # Display a sample of 10 rows
 lcd_df.sample(10)
 
 
-# In[ ]:
+# In[58]:
 
 
 # Display the info of the dataframe
 lcd_df.info()
 
 
-# In[ ]:
+# In[59]:
 
 
 # Remove columns that are missing more than 50% of the data
@@ -342,7 +342,7 @@ lcd_df = lcd_df.dropna(thresh=0.5*len(lcd_df), axis=1)
 lcd_df.info()
 
 
-# In[ ]:
+# In[60]:
 
 
 lcd_df.sample(10)
@@ -352,7 +352,7 @@ lcd_df.sample(10)
 
 # ### Data Source
 
-# In[ ]:
+# In[61]:
 
 
 # Read the CSV file into a dataframe
@@ -361,7 +361,7 @@ precip_df = pd.read_csv(r'data\USAFacts_Ripley_County_Indiana_Precipitation.csv'
 
 # ### Data Wrangling/Cleaning
 
-# In[ ]:
+# In[62]:
 
 
 # Remove the 0 from the column names and trim the column names
@@ -369,7 +369,7 @@ precip_df.columns = precip_df.columns.str.replace('0', '').str.strip()
 precip_df.columns
 
 
-# In[ ]:
+# In[63]:
 
 
 # Create a new column 'year' from the 'time' column
@@ -377,7 +377,7 @@ precip_df['YEAR'] = precip_df['TIME'].str[:4].astype('int64')
 precip_df.head()
 
 
-# In[ ]:
+# In[64]:
 
 
 # Rename the 'DATA' column to 'PRECIPITATION'
@@ -385,7 +385,7 @@ precip_df.rename(columns={'DATA':'PRECIPITATION'}, inplace=True)
 precip_df.head()
 
 
-# In[ ]:
+# In[65]:
 
 
 # Calculate the mean precipitation for each year using the 'PRECIPITATION' and 'YEAR' columns
@@ -393,7 +393,7 @@ precip_df_mean = precip_df[['PRECIPITATION', 'YEAR']].groupby('YEAR').mean()
 precip_df_mean.head()
 
 
-# In[ ]:
+# In[66]:
 
 
 # Filter the dataframe to include only the years 2013-2023
@@ -403,7 +403,7 @@ precip_df_mean.head()
 
 # ### Data Visualization
 
-# In[ ]:
+# In[67]:
 
 
 # Plot the mean precipitation for each year
@@ -419,14 +419,14 @@ plt.show()
 
 # ### Data Source
 
-# In[ ]:
+# In[68]:
 
 
 indy_star_summary_url = 'https://data.indystar.com/weather-data/ripley-county/18137/2023-07-01/?syear=1895&eyear=2023#summary'
 indy_star_table_url = 'https://data.indystar.com/weather-data/ripley-county/18137/2023-07-01/table/'
 
 
-# In[ ]:
+# In[69]:
 
 
 page = requests.get(indy_star_table_url)
@@ -434,7 +434,7 @@ soup = BeautifulSoup(page.content, 'html.parser')
 #print(soup.prettify())
 
 
-# In[ ]:
+# In[70]:
 
 
 import lxml.html as lh
@@ -449,7 +449,7 @@ indy_star_df.head()
 
 # ### Data Wrangling/Cleaning
 
-# In[ ]:
+# In[71]:
 
 
 # Calculate the 'Year' column from the 'Month' column
@@ -457,7 +457,7 @@ indy_star_df['Year'] = indy_star_df['Month'].str[-4:].astype('int64')
 indy_star_df.head()
 
 
-# In[ ]:
+# In[72]:
 
 
 # Calculate the mean precipitation for each year using the 'Precipitation' and 'Year' columns
@@ -469,7 +469,7 @@ indy_star_df_mean.head()
 
 # ### Data Visualization
 
-# In[ ]:
+# In[73]:
 
 
 # Compare the mean precipitation for each year from the two dataframes
@@ -483,7 +483,7 @@ plt.legend()
 plt.show()
 
 
-# In[ ]:
+# In[74]:
 
 
 # Display the mean preciptation for each year from the two dataframes side-by-side
@@ -503,7 +503,7 @@ plt.show()
 
 # # Combining the Data Sets
 
-# In[ ]:
+# In[75]:
 
 
 # Combine the nass_pivoted_df and precip_df dataframes
@@ -511,7 +511,7 @@ combined_df = pd.concat([nass_pivoted_df, precip_df_mean], axis=1)
 combined_df.head()
 
 
-# In[ ]:
+# In[76]:
 
 
 # Calculate the correlation matrix
@@ -519,7 +519,7 @@ corr_matrix = combined_df.corr()
 corr_matrix
 
 
-# In[ ]:
+# In[77]:
 
 
 # Heatmap of correlation matrix
@@ -577,6 +577,37 @@ plt.show()
 # * What changes have you made to your project based on this feedback?
 #     * Not applicable at this time.
 
+# # Checkpoint 3: Machine Learning (Regression/Classification)
+
+# 1. Machine Learning Plan
+# 
+# * What type of machine learning model are you planning to use?
+#     * I plan to use linear regression to predict the yield for 2023.
+# * What are the challenges you have identified/are you anticipating in building your machine learning model?
+#     * One challenge I have is the almost non-existent correlation between precipitation, yield, and area planted.  Since corn needs moisture/rainfall to help it grow, there must be a correlation that exists.  Another challenge is I do not have the data for 2023.  I can only assume that a prediction will be relevant and statistically signficant with the current data.
+# * How are you planning to address these challenges?
+#     * I'm unsure at this time.  I need to think about whether this dataset is viable for a machine learning algorthim and predictive model.  There are many factors that are not part of the dataset that factor into this outcome.
+
+# 2. Machine Learning Implementation Process
+# 
+#     (Ask, Prepare, Process, Analyze, Evaluate, Share)
+# 
+# * This includes:
+#     * EDA process that allows for identifying issues
+#     * Splitting the dataset into training and test sets
+#     * Data cleaning process using sci-kit learn pipelines
+#         * Data imputation
+#         * Data Scaling and Normalization
+#         * Handling of Categorical Data
+#     * Testing multiple algorithms and models
+#     * Evaluating the different models and choosing one.
+
+# 3. Prior Feedback and Updates
+#     * What feedback did you receive from your peers and/or the teaching team?
+#         * I want to thank Christopher for his feedback.  Though the feedback did not provide any constructive critism, I appreciate the encouragement.
+#     * What changes have you made to your project based on this feedback?
+#         * I did not make any changes based on others' feedback.  However, I am evaluating my project sources and may determine to modify the project based on the usage of machine learning.
+
 # # Resources and References
 # *What resources and references have you used for this project?*
 # 📝 <!-- Answer Below -->
@@ -589,7 +620,7 @@ plt.show()
 # * Github Copilot
 # * https://stackoverflow.com/questions/14745022/how-to-split-a-column-into-two-columns
 
-# In[ ]:
+# In[78]:
 
 
 # ⚠️ Make sure you run this cell at the end of your notebook before every submission!
