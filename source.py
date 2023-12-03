@@ -49,7 +49,7 @@
 
 # # Import Packages/Libraries
 
-# In[79]:
+# In[144]:
 
 
 # Start your code here
@@ -75,27 +75,26 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 
 
-
 # # Data Set: USDA National Agricultural Statistics Service (NASS)
 
 # ### Data Source
 
 # "This product uses the NASS API but is not endorsed or certified by NASS."
 
-# In[80]:
+# In[145]:
 
 
 # API KEY obtained from https://quickstats.nass.usda.gov/api/
 API_KEY = os.getenv('API_KEY')
 
 
-# In[81]:
+# In[146]:
 
 
 # URL='https://quickstats.nass.usda.gov/results/5707E545-6B9E-35A4-AF77-DAF0BA7D7A7B'
 
 
-# In[82]:
+# In[147]:
 
 
 # API documentation: https://quickstats.nass.usda.gov/api
@@ -186,7 +185,7 @@ nass_data = str(response.json())
 
 # #### Data Loading
 
-# In[83]:
+# In[148]:
 
 
 import io
@@ -196,7 +195,7 @@ nass_df = pd.read_json(io.StringIO(nass_data), orient='records')
 nass_df.head()
 
 
-# In[84]:
+# In[149]:
 
 
 # Reference: https://stackoverflow.com/questions/613183/how-do-i-sort-a-dictionary-by-value
@@ -220,7 +219,7 @@ nass_combined_df = pd.concat(dataframes, ignore_index=True)
 nass_combined_df.sample(10)
 
 
-# In[85]:
+# In[150]:
 
 
 """
@@ -235,7 +234,7 @@ nass_combined_df_clean = clean_data(nass_combined_df.copy())
 nass_combined_df_clean.head()
 
 
-# In[86]:
+# In[151]:
 
 
 # Remove commas from the 'Value' column
@@ -245,7 +244,7 @@ nass_combined_df_clean = nass_combined_df_clean.astype({'Value': 'float64'})
 nass_combined_df_clean.info()
 
 
-# In[87]:
+# In[152]:
 
 
 # Split dataframe into four dataframes: one for each statistical category
@@ -255,14 +254,14 @@ yield_per_acre = nass_combined_df_clean[nass_combined_df_clean['statisticcat_des
 production = nass_combined_df_clean[nass_combined_df_clean['statisticcat_desc'] == 'PRODUCTION']
 
 
-# In[88]:
+# In[153]:
 
 
 nass_pivoted_df = nass_combined_df_clean.pivot(index='year', columns='statisticcat_desc', values='Value')
 nass_pivoted_df
 
 
-# In[89]:
+# In[154]:
 
 
 print(area_planted.shape)
@@ -272,7 +271,7 @@ print(production.shape)
 print(nass_combined_df_clean.shape)
 
 
-# In[90]:
+# In[155]:
 
 
 nass_pivoted_df.info()
@@ -280,7 +279,7 @@ nass_pivoted_df.info()
 
 # ### Data Visualization
 
-# In[91]:
+# In[156]:
 
 
 # Correlation matrix of nass_pivoted_df
@@ -288,7 +287,7 @@ corr_matrix = nass_pivoted_df.corr()
 corr_matrix
 
 
-# In[92]:
+# In[157]:
 
 
 # Heatmap of correlation matrix
@@ -299,42 +298,42 @@ plt.show()
 
 # # Data Set: Local Climatological Data (LCD)
 
-# In[93]:
+# In[158]:
 
 
 # Read the CSV file into a dataframe
 lcd_df = pd.read_csv('data\LCD_Columbus_Bakalar_Municipal_Airport_Indiana_US.csv', low_memory=False)
 
 
-# In[94]:
+# In[159]:
 
 
 # Describe the dataframe
 lcd_df.describe()
 
 
-# In[95]:
+# In[160]:
 
 
 # Display the first 5 rows of the dataframe
 lcd_df.head()
 
 
-# In[96]:
+# In[161]:
 
 
 # Display a sample of 10 rows
 lcd_df.sample(10)
 
 
-# In[97]:
+# In[162]:
 
 
 # Display the info of the dataframe
 lcd_df.info()
 
 
-# In[98]:
+# In[163]:
 
 
 # Remove columns that are missing more than 50% of the data
@@ -342,7 +341,7 @@ lcd_df = lcd_df.dropna(thresh=0.5*len(lcd_df), axis=1)
 lcd_df.info()
 
 
-# In[99]:
+# In[164]:
 
 
 lcd_df.sample(10)
@@ -352,7 +351,7 @@ lcd_df.sample(10)
 
 # ### Data Source
 
-# In[100]:
+# In[165]:
 
 
 # Read the CSV file into a dataframe
@@ -361,7 +360,7 @@ precip_df = pd.read_csv(r'data\USAFacts_Ripley_County_Indiana_Precipitation.csv'
 
 # ### Data Wrangling/Cleaning
 
-# In[101]:
+# In[166]:
 
 
 # Remove the 0 from the column names and trim the column names
@@ -369,7 +368,7 @@ precip_df.columns = precip_df.columns.str.replace('0', '').str.strip()
 precip_df.columns
 
 
-# In[102]:
+# In[167]:
 
 
 # Create a new column 'year' from the 'time' column
@@ -377,7 +376,7 @@ precip_df['YEAR'] = precip_df['TIME'].str[:4].astype('int64')
 precip_df.head()
 
 
-# In[103]:
+# In[168]:
 
 
 # Rename the 'DATA' column to 'PRECIPITATION'
@@ -385,7 +384,7 @@ precip_df.rename(columns={'DATA':'PRECIPITATION'}, inplace=True)
 precip_df.head()
 
 
-# In[104]:
+# In[169]:
 
 
 # Calculate the mean precipitation for each year using the 'PRECIPITATION' and 'YEAR' columns
@@ -393,7 +392,7 @@ precip_df_mean = precip_df[['PRECIPITATION', 'YEAR']].groupby('YEAR').mean()
 precip_df_mean.head()
 
 
-# In[105]:
+# In[170]:
 
 
 # Filter the dataframe to include only the years 2013-2023
@@ -403,7 +402,7 @@ precip_df_mean.head()
 
 # ### Data Visualization
 
-# In[106]:
+# In[171]:
 
 
 # Plot the mean precipitation for each year
@@ -419,14 +418,14 @@ plt.show()
 
 # ### Data Source
 
-# In[107]:
+# In[172]:
 
 
 indy_star_summary_url = 'https://data.indystar.com/weather-data/ripley-county/18137/2023-07-01/?syear=1895&eyear=2023#summary'
 indy_star_table_url = 'https://data.indystar.com/weather-data/ripley-county/18137/2023-07-01/table/'
 
 
-# In[108]:
+# In[173]:
 
 
 page = requests.get(indy_star_table_url)
@@ -434,7 +433,7 @@ soup = BeautifulSoup(page.content, 'html.parser')
 #print(soup.prettify())
 
 
-# In[109]:
+# In[174]:
 
 
 import lxml.html as lh
@@ -449,7 +448,7 @@ indy_star_df.head()
 
 # ### Data Wrangling/Cleaning
 
-# In[110]:
+# In[175]:
 
 
 # Calculate the 'Year' column from the 'Month' column
@@ -457,7 +456,7 @@ indy_star_df['Year'] = indy_star_df['Month'].str[-4:].astype('int64')
 indy_star_df.head()
 
 
-# In[111]:
+# In[176]:
 
 
 # Calculate the mean precipitation for each year using the 'Precipitation' and 'Year' columns
@@ -469,7 +468,7 @@ indy_star_df_mean.head()
 
 # ### Data Visualization
 
-# In[112]:
+# In[177]:
 
 
 # Compare the mean precipitation for each year from the two dataframes
@@ -483,7 +482,7 @@ plt.legend()
 plt.show()
 
 
-# In[113]:
+# In[178]:
 
 
 # Display the mean preciptation for each year from the two dataframes side-by-side
@@ -503,7 +502,7 @@ plt.show()
 
 # # Combining the Data Sets
 
-# In[114]:
+# In[179]:
 
 
 # Combine the nass_pivoted_df and precip_df dataframes
@@ -511,7 +510,29 @@ combined_df = pd.concat([nass_pivoted_df, precip_df_mean], axis=1)
 combined_df.head()
 
 
-# In[115]:
+# In[180]:
+
+
+# Create a 2023 precipitation variable
+precip_2023 = combined_df.loc[2023, 'PRECIPITATION']
+precip_2023
+
+
+# In[181]:
+
+
+# Create a 2023 dataframe using the median values for each column
+# then add the 2023 precipitation value to the dataframe
+# Name the dataframe 'predict_2023_df'
+predict_2023_df = combined_df.median()
+predict_2023_df['PRECIPITATION'] = precip_2023
+
+# Drop the yield column
+predict_2023_df = predict_2023_df.drop('YIELD')
+predict_2023_df
+
+
+# In[182]:
 
 
 # Calculate the correlation matrix
@@ -519,7 +540,7 @@ corr_matrix = combined_df.corr()
 corr_matrix
 
 
-# In[116]:
+# In[183]:
 
 
 # Heatmap of correlation matrix
@@ -612,7 +633,7 @@ plt.show()
 
 # ## Exploratory Data Analysis
 
-# In[119]:
+# In[184]:
 
 
 # Display a scatter plot of the 'PRECIPITATION' and 'YIELD' columns
@@ -626,7 +647,7 @@ plt.show()
 
 # With the limited amount of data points, approximately 10 years of aggregated data, you can vaguely see a relationship between the annual rainfall and the annual yield of corn in Ripley county, Indiana.
 
-# In[122]:
+# In[185]:
 
 
 # Correlation matrix of combined_df
@@ -634,7 +655,7 @@ corr_matrix = combined_df.corr()
 corr_matrix
 
 
-# In[123]:
+# In[186]:
 
 
 # Display a pairplot of the combined_df dataframe
@@ -646,14 +667,28 @@ plt.show()
 
 # ## Prepare
 
-# In[125]:
+# In[187]:
 
 
 # Split the combined_df dataframe for training and testing
 from sklearn.model_selection import train_test_split
 
+# Remove 2023 from the dataframe
+combined_df = combined_df.drop(index=2023)
+
+# Sort the dataframe by year
+combined_df = combined_df.sort_index()
+
+# Create the X and y dataframes
 X = combined_df.drop(columns=['YIELD'])
-y = combined_df['YIELD']
+
+# Replace NaN values with imputed values in Area Harvested, Area Planted, and Production
+X['AREA HARVESTED'] = X['AREA HARVESTED'].fillna(X['AREA HARVESTED'].median())
+X['AREA PLANTED'] = X['AREA PLANTED'].fillna(X['AREA PLANTED'].median())
+X['PRODUCTION'] = X['PRODUCTION'].fillna(X['PRODUCTION'].median())
+
+# Replace NaN values with imputed values for Yield
+y = combined_df['YIELD'].fillna(combined_df['YIELD'].median())
 
 X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
 print(f'X_train shape: {X_train.shape}')
@@ -662,9 +697,15 @@ print(f'y_train shape: {y_train.shape}')
 print(f'y_test shape: {y_test.shape}')
 
 
+# In[188]:
+
+
+print(X)
+
+
 # ## Process
 
-# In[ ]:
+# In[189]:
 
 
 # Process pipeline for numeric features
@@ -739,8 +780,9 @@ print(f'Coefficient of Determination: {r2}')
 
 # Display the feature importances
 importances = model.named_steps['regressor'].feature_importances_
-feature_names = model.named_steps['preprocessor'].transformers_[1][1].named_steps['onehot'].get_feature_names(categorical_features)
-feature_names = np.concatenate([numeric_features, feature_names])
+feature_names = np.concatenate([numeric_features, categorical_features])
+#feature_names = model.named_steps['preprocessor'].transformers_[1][1].named_steps['onehot'].get_feature_names(categorical_features)
+#feature_names = np.concatenate([numeric_features, feature_names])
 sorted_indices = np.argsort(importances)[::-1]
 
 plt.figure(figsize=(12, 8))
@@ -754,14 +796,18 @@ plt.show()
 
 # ## Analyze
 
-# In[ ]:
+# In[190]:
 
 
 # Create a Linear Regression model
 from sklearn.linear_model import LinearRegression
 
+# Fit the model
 lin_reg = LinearRegression()
 lin_reg.fit(X_train, y_train)
+
+# Predict the yield for the test data
+y_pred = lin_reg.predict(X_test)
 
 # Calculate the R^2 score for the training and testing data
 print(f'Training R^2 score: {lin_reg.score(X_train, y_train)}')
@@ -772,68 +818,6 @@ from sklearn.metrics import mean_absolute_error
 
 y_train_pred = lin_reg.predict(X_train)
 y_test_pred = lin_reg.predict(X_test)
-print(f'Training MAE: {mean_absolute_error(y_train, y_train_pred)}')
-print(f'Testing MAE: {mean_absolute_error(y_test, y_test_pred)}')
-
-# Calculate the mean squared error for the training and testing data
-from sklearn.metrics import mean_squared_error
-
-print(f'Training MSE: {mean_squared_error(y_train, y_train_pred)}')
-print(f'Testing MSE: {mean_squared_error(y_test, y_test_pred)}')
-
-# Calculate the root mean squared error for the training and testing data
-from sklearn.metrics import mean_squared_error
-
-print(f'Training RMSE: {np.sqrt(mean_squared_error(y_train, y_train_pred))}')
-print(f'Testing RMSE: {np.sqrt(mean_squared_error(y_test, y_test_pred))}')
-
-# Calculate the mean absolute percentage error for the training and testing data
-from sklearn.metrics import mean_absolute_percentage_error
-
-print(f'Training MAPE: {mean_absolute_percentage_error(y_train, y_train_pred)}')
-print(f'Testing MAPE: {mean_absolute_percentage_error(y_test, y_test_pred)}')
-
-# Calculate the mean absolute scaled error for the training and testing data
-from sklearn.metrics import mean_absolute_error
-
-print(f'Training MASE: {mean_absolute_error(y_train, y_train_pred) / mean_absolute_error(y_train, y_train.mean())}')
-print(f'Testing MASE: {mean_absolute_error(y_test, y_test_pred) / mean_absolute_error(y_test, y_test.mean())}')
-
-# Calculate the coefficient of determination for the training and testing data
-from sklearn.metrics import r2_score
-
-print(f'Training R^2 score: {r2_score(y_train, y_train_pred)}')
-print(f'Testing R^2 score: {r2_score(y_test, y_test_pred)}')
-
-# Calculate the adjusted R^2 score for the training and testing data
-
-def adjusted_r2_score(y_true, y_pred, n, p):
-    return 1 - ((1 - r2_score(y_true, y_pred)) * (n - 1) / (n - p - 1))
-
-print(f'Training Adjusted R^2 score: {adjusted_r2_score(y_train, y_train_pred, X_train.shape[0], X_train.shape[1])}'
-)
-print(f'Testing Adjusted R^2 score: {adjusted_r2_score(y_test, y_test_pred, X_test.shape[0], X_test.shape[1])}'
-)
-
-
-# In[ ]:
-
-
-# Create a Ridge Regression model
-from sklearn.linear_model import Ridge
-
-ridge_reg = Ridge(alpha=1, solver='cholesky')
-ridge_reg.fit(X_train, y_train)
-
-# Calculate the R^2 score for the training and testing data
-print(f'Training R^2 score: {ridge_reg.score(X_train, y_train)}')
-print(f'Testing R^2 score: {ridge_reg.score(X_test, y_test)}')
-
-# Calculate the mean absolute error for the training and testing data
-from sklearn.metrics import mean_absolute_error
-
-y_train_pred = ridge_reg.predict(X_train)
-y_test_pred = ridge_reg.predict(X_test)
 
 print(f'Training MAE: {mean_absolute_error(y_train, y_train_pred)}')
 print(f'Testing MAE: {mean_absolute_error(y_test, y_test_pred)}')
@@ -856,27 +840,17 @@ from sklearn.metrics import mean_absolute_percentage_error
 print(f'Training MAPE: {mean_absolute_percentage_error(y_train, y_train_pred)}')
 print(f'Testing MAPE: {mean_absolute_percentage_error(y_test, y_test_pred)}')
 
-# Calculate the mean absolute scaled error for the training and testing data
-from sklearn.metrics import mean_absolute_error
+# Display the linear regression coefficients
+print(f'Intercept: {lin_reg.intercept_}')
+print(f'Coefficients: {lin_reg.coef_}')
 
-print(f'Training MASE: {mean_absolute_error(y_train, y_train_pred) / mean_absolute_error(y_train, y_train.mean())}')
-print(f'Testing MASE: {mean_absolute_error(y_test, y_test_pred) / mean_absolute_error(y_test, y_test.mean())}')
 
-# Calculate the coefficient of determination for the training and testing data
-from sklearn.metrics import r2_score
+# In[192]:
 
-print(f'Training R^2 score: {r2_score(y_train, y_train_pred)}')
-print(f'Testing R^2 score: {r2_score(y_test, y_test_pred)}')
 
-# Calculate the adjusted R^2 score for the training and testing data
-
-def adjusted_r2_score(y_true, y_pred, n, p):
-    return 1 - ((1 - r2_score(y_true, y_pred)) * (n - 1) / (n - p - 1))
-
-print(f'Training Adjusted R^2 score: {adjusted_r2_score(y_train, y_train_pred, X_train.shape[0], X_train.shape[1])}'
-)
-print(f'Testing Adjusted R^2 score: {adjusted_r2_score(y_test, y_test_pred, X_test.shape[0], X_test.shape[1])}'
-)
+# Predict the yield for the 2023 data using the linear regression model
+y_pred = lin_reg.predict(predict_2023_df.values.reshape(1, -1))
+print(f'Predicted Yield for 2023: {y_pred}')
 
 
 # # Resources and References
@@ -891,7 +865,7 @@ print(f'Testing Adjusted R^2 score: {adjusted_r2_score(y_test, y_test_pred, X_te
 # * Github Copilot
 # * https://stackoverflow.com/questions/14745022/how-to-split-a-column-into-two-columns
 
-# In[117]:
+# In[193]:
 
 
 # ⚠️ Make sure you run this cell at the end of your notebook before every submission!
